@@ -6,8 +6,13 @@ import guru.qa.junit.pages.BookStorePage;
 import guru.qa.junit.pages.TextBoxPage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public class TextBoxPageTest {
 
@@ -54,5 +59,31 @@ public class TextBoxPageTest {
         bookStorePage.openPage()
                 .setSearchWord(testData)
                 .checkBookInSearchResults(bookTitle);
+    }
+
+    static Stream<Arguments> booksByPublisherData() {
+        return Stream.of(
+                Arguments.of(
+                        "No Starch Press",
+                        List.of(
+                                "Eloquent JavaScript, Second Edition",
+                                "Understanding ECMAScript 6")),
+        Arguments.of(
+                "O'Reilly Media",
+                List.of(
+                        "Git Pocket Guide",
+                        "Learning JavaScript Design Patterns",
+                        "Designing Evolvable Web APIs with ASP.NET",
+                        "Speaking JavaScript",
+                        "You Don't Know JS",
+                        "Programming JavaScript Applications")));
+    }
+
+    @MethodSource("booksByPublisherData")
+    @ParameterizedTest
+    void checkBooksByPublisher(String publisher, List<String> books) {
+        bookStorePage.openPage()
+                .setSearchWord(publisher)
+                .checkBooksInResult(books);
     }
 }
